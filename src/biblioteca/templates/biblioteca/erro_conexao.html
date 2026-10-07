@@ -1,0 +1,17 @@
+{% extends "biblioteca/base.html" %}
+{% block titulo %}Sem conexão com o banco{% endblock %}
+
+{% block conteudo %}
+<article class="erro-conexao">
+  {% include "biblioteca/svg/desconectado.html" %}
+  <h2>O sistema não conseguiu falar com o banco de dados</h2>
+  <p>Confira estes pontos e tente de novo:</p>
+  <ul>
+    <li>O serviço do PostgreSQL está rodando (em Serviços do Windows: <code>postgresql-x64-18</code>);</li>
+    <li>A senha na <code>DATABASE_URL</code> do arquivo <code>.env</code> está certa (caracteres especiais precisam ser codificados, ex.: <code>@</code> vira <code>%40</code>);</li>
+    <li>O banco <code>biblioteca</code> foi criado.</li>
+  </ul>
+  {% if detalhe %}<p><small>Detalhe técnico: {{ detalhe }}</small></p>{% endif %}
+  <a href="" role="button">Tentar de novo</a>
+</article>
+{% endblock %}

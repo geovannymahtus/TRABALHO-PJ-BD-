@@ -1,0 +1,16 @@
+{% extends "biblioteca/base.html" %}
+{% block titulo %}Confirmar exclusão{% endblock %}
+
+{% block conteudo %}
+<article>
+  <h2>Excluir {{ objeto }}?</h2>
+  <p>O registro sai do banco de vez. Se já existir empréstimo ligado a ele, o banco não deixa excluir.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="botoes">
+      <button type="submit" class="botao-perigo">Excluir</button>
+      <a href="{% url url_voltar %}" role="button" class="secondary outline">Manter</a>
+    </div>
+  </form>
+</article>
+{% endblock %}

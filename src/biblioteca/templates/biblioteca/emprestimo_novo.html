@@ -1,0 +1,31 @@
+{% extends "biblioteca/base.html" %}
+{% block titulo %}Novo empréstimo{% endblock %}
+
+{% block conteudo %}
+<div class="form-area">
+  <article>
+    <h2>Novo empréstimo</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_div }}
+      <p><small>
+        Só aparecem livros com exemplar na estante. O banco ainda confere o estoque
+        e se o membro já está no limite de 3 empréstimos.
+      </small></p>
+      <div class="botoes">
+        <button type="submit">Registrar empréstimo</button>
+        <a href="{% url 'emprestimos_lista' %}" role="button" class="secondary outline">Cancelar</a>
+      </div>
+    </form>
+  </article>
+  <div class="ilustracao">
+    {% include "biblioteca/svg/emprestimo.html" %}
+    <p>A data de devolução é calculada pelo banco: hoje + o prazo em dias.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block aviso_banco %}
+<p class="aviso-banco">{% include "biblioteca/svg/banco.html" %}
+  <span>Esta tela usa a PROCEDURE <code>sp_registrar_emprestimo</code> (via <code>CALL</code>)</span></p>
+{% endblock %}

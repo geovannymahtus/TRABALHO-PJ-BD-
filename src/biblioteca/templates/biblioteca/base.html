@@ -1,0 +1,48 @@
+{% load static %}<!doctype html>
+<html lang="pt-br" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Biblioteca{% endblock %} | Biblioteca</title>
+  <!-- Fontes: Literata (feita para leitura de livros) e Courier Prime (máquina de escrever) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap">
+  <!-- Pico.css via CDN + nossos ajustes -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="{% static 'biblioteca/estilo.css' %}">
+</head>
+<body>
+  {% with tela=request.resolver_match.url_name|default:"" %}
+  <header class="topo">
+    <nav class="container" aria-label="Menu principal">
+      <ul>
+        <li>
+          <a href="{% url 'inicio' %}" class="marca">{% include "biblioteca/svg/logo.html" %} Biblioteca</a>
+        </li>
+      </ul>
+      <ul>
+        <li><a href="{% url 'inicio' %}" {% if tela == "inicio" %}aria-current="page"{% endif %}>Estante</a></li>
+        <li><a href="{% url 'livros_lista' %}" {% if "livro" in tela %}aria-current="page"{% endif %}>Livros</a></li>
+        <li><a href="{% url 'membros_lista' %}" {% if "membro" in tela %}aria-current="page"{% endif %}>Membros</a></li>
+        <li><a href="{% url 'emprestimo_novo' %}" {% if tela == "emprestimo_novo" %}aria-current="page"{% endif %}>Novo empréstimo</a></li>
+        <li><a href="{% url 'emprestimos_lista' %}" {% if tela == "emprestimos_lista" or tela == "emprestimo_detalhe" %}aria-current="page"{% endif %}>Empréstimos</a></li>
+      </ul>
+    </nav>
+  </header>
+  {% endwith %}
+
+  <main class="container">
+    {% for mensagem in messages %}
+      <div class="mensagem mensagem-{{ mensagem.tags }}" role="status">{{ mensagem }}</div>
+    {% endfor %}
+
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="container">
+    {% block aviso_banco %}{% endblock %}
+    <small>Trabalho de Banco de Dados, feito com Django e PostgreSQL</small>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "biblioteca/base.html" %}
+{% block titulo %}{{ titulo_pagina }}{% endblock %}
+
+{% block conteudo %}
+<div class="form-area">
+  <article>
+    <h2>{{ titulo_pagina }}</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_div }}
+      <div class="botoes">
+        <button type="submit">Salvar</button>
+        <a href="{% url url_voltar %}" role="button" class="secondary outline">Cancelar</a>
+      </div>
+    </form>
+  </article>
+  <div class="ilustracao vazio">
+    {% include "biblioteca/svg/vazio.html" %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "biblioteca/base.html" %}
+{% block titulo %}Empréstimo {{ dados.id_emprestimo }}{% endblock %}
+
+{% block conteudo %}
+<p><a href="{% url 'emprestimos_lista' %}">Voltar para os empréstimos</a></p>
+
+<div class="ficha-area">
+  <section class="ficha" aria-labelledby="titulo-ficha">
+    <h2 class="ficha-titulo" id="titulo-ficha">Ficha de empréstimo nº {{ dados.id_emprestimo }}</h2>
+
+    {% if dados.situacao == "Em atraso" %}
+      <span class="carimbo carimbo-atraso carimbo-grande">Em atraso</span>
+    {% elif dados.situacao == "No prazo" %}
+      <span class="carimbo carimbo-prazo carimbo-grande">No prazo</span>
+    {% else %}
+      <span class="carimbo carimbo-devolvido carimbo-grande">Devolvido</span>
+    {% endif %}
+
+    <dl>
+      <div class="linha"><dt>Livro</dt><dd>{{ dados.titulo }}</dd></div>
+      <div class="linha"><dt>Autor</dt><dd>{{ emprestimo.livro.autor }}</dd></div>
+      <div class="linha"><dt>Membro</dt><dd>{{ dados.nome_membro }} <small>({{ emprestimo.membro.email }})</small></dd></div>
+      <div class="linha"><dt>Retirado em</dt><dd class="datilo">{{ dados.data_emprestimo|date:"d/m/Y" }}</dd></div>
+      <div class="linha"><dt>Devolver até</dt><dd class="datilo">{{ dados.data_prevista|date:"d/m/Y" }}</dd></div>
+      <div class="linha"><dt>Devolvido em</dt><dd class="datilo">{{ dados.data_devolucao|date:"d/m/Y"|default:"—" }}</dd></div>
+      {% if dados.dias_atraso %}
+      <div class="linha"><dt>Dias de atraso</dt><dd class="datilo">{{ dados.dias_atraso }}</dd></div>
+      {% endif %}
+    </dl>
+  </section>
+
+  <article class="painel-multa">
+    <h3>Multa</h3>
+    <p class="valor-multa{% if multa_calculada > 0 %} tem-multa{% endif %}">R$ {{ multa_calculada|floatformat:2 }}</p>
+    <p><small>
+      R$ 2,00 por dia de atraso,
+      {% if dados.data_devolucao %}contando até a data da devolução.{% else %}contando até hoje.{% endif %}
+      Valor calculado agora pelo banco com <code>fn_calcular_multa({{ dados.id_emprestimo }})</code>.
+    </small></p>
+
+    {% if dados.data_devolucao %}
+      <p>Multa gravada na devolução: <strong class="datilo">R$ {{ emprestimo.multa|floatformat:2 }}</strong></p>
+    {% else %}
+      <form method="post" action="{% url 'emprestimo_devolver' dados.id_emprestimo %}"
+            onsubmit="return confirm('Registrar a devolução deste empréstimo?');">
+        {% csrf_token %}
+        <button type="submit">Registrar devolução</button>
+      </form>
+    {% endif %}
+  </article>
+</div>
+{% endblock %}
+
+{% block aviso_banco %}
+<p class="aviso-banco">{% include "biblioteca/svg/banco.html" %}
+  <span>Esta tela usa a FUNCTION <code>fn_calcular_multa</code> e lê os dados da VIEW <code>vw_emprestimos_detalhados</code></span></p>
+{% endblock %}

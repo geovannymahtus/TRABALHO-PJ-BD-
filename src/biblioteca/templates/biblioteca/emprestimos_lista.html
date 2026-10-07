@@ -1,0 +1,70 @@
+{% extends "biblioteca/base.html" %}
+{% block titulo %}Empréstimos{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+  <div>
+    <h2>Empréstimos</h2>
+    <p>Situação e atraso calculados pelo banco, na hora da consulta.</p>
+  </div>
+  <a href="{% url 'emprestimo_novo' %}" role="button">Registrar empréstimo</a>
+</div>
+
+<nav aria-label="Filtrar por situação">
+  <ul class="abas">
+    {% for valor, rotulo in filtros %}
+      <li><a href="?situacao={{ valor|urlencode }}" {% if valor == situacao %}aria-current="page"{% endif %}>{{ rotulo }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+
+{% if emprestimos %}
+<div class="overflow-auto">
+<table class="striped">
+  <thead>
+    <tr>
+      <th>Nº</th><th>Livro e membro</th><th>Retirado</th><th>Devolver até</th>
+      <th>Devolvido</th><th>Situação</th><th><span class="sr-only">Ações</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in emprestimos %}
+    <tr>
+      <td class="datilo">{{ e.id_emprestimo }}</td>
+      <td class="livro-membro">{{ e.titulo }}<small>{{ e.nome_membro }}</small></td>
+      <td class="datilo data">{{ e.data_emprestimo|date:"d/m/Y" }}</td>
+      <td class="datilo data">{{ e.data_prevista|date:"d/m/Y" }}</td>
+      <td class="datilo data">{{ e.data_devolucao|date:"d/m/Y"|default:"—" }}</td>
+      <td>
+        {% if e.situacao == "Em atraso" %}<span class="carimbo carimbo-atraso">Em atraso</span>
+          <small class="dias-atraso">{{ e.dias_atraso }} dia{{ e.dias_atraso|pluralize }}</small>
+        {% elif e.situacao == "No prazo" %}<span class="carimbo carimbo-prazo">No prazo</span>
+        {% else %}<span class="carimbo carimbo-devolvido">Devolvido</span>{% endif %}
+      </td>
+      <td class="acoes">
+        <a href="{% url 'emprestimo_detalhe' e.id_emprestimo %}">Ficha</a>
+        {% if e.situacao != "Devolvido" %}
+        <form method="post" action="{% url 'emprestimo_devolver' e.id_emprestimo %}" class="form-linha"
+              onsubmit="return confirm('Registrar a devolução do empréstimo {{ e.id_emprestimo }}?');">
+          {% csrf_token %}
+          <button type="submit" class="botao-pequeno">Devolver</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="vazio">
+  {% include "biblioteca/svg/vazio.html" %}
+  <p>Nenhum empréstimo nessa situação. <a href="{% url 'emprestimos_lista' %}">Ver todos</a></p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block aviso_banco %}
+<p class="aviso-banco">{% include "biblioteca/svg/banco.html" %}
+  <span>Esta tela usa a VIEW <code>vw_emprestimos_detalhados</code>, e o botão Devolver chama a PROCEDURE <code>sp_registrar_devolucao</code></span></p>
+{% endblock %}

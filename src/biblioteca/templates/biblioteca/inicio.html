@@ -1,0 +1,77 @@
+{% extends "biblioteca/base.html" %}
+{% load biblioteca_extras %}
+{% block titulo %}Estante{% endblock %}
+
+{% block conteudo %}
+<h1>O que está na estante hoje</h1>
+<p class="resumo">
+  {{ livros|length }} título{{ livros|length|pluralize }} no acervo,
+  <a href="{% url 'emprestimos_lista' %}?situacao=Ativos">{{ ativos }} empréstimo{{ ativos|pluralize }} em aberto</a>
+  e <a href="{% url 'emprestimos_lista' %}?situacao=Em+atraso">{{ em_atraso }} em atraso</a>.
+</p>
+
+<figure class="estante-figura">
+  <div class="estante">
+    {% for livro in livros %}
+      <a href="{% url 'livros_lista' %}?q={{ livro.titulo|urlencode }}"
+         class="lombada{% if livro.exemplares_disponiveis == 0 %} vazia{% endif %}"
+         style="{{ livro|estilo_lombada }}"
+         title="{{ livro.titulo }} — {{ livro.exemplares_disponiveis }} de {{ livro.exemplares_total }} disponível(is)"
+         aria-label="{{ livro.titulo }}, {{ livro.exemplares_disponiveis }} de {{ livro.exemplares_total }} disponíveis">
+        <span>{{ livro.titulo }}</span>
+      </a>
+    {% empty %}
+      <p>A estante está vazia. <a href="{% url 'livro_criar' %}">Cadastre o primeiro livro</a>.</p>
+    {% endfor %}
+    {% if livros %}
+    <!-- aparador de livros segurando a fileira -->
+    <span class="aparador" aria-hidden="true">
+      <svg width="46" height="120" viewBox="0 0 46 120">
+        <path d="M6 120V22c0-12 10-18 20-18h4v116z" fill="currentColor"/>
+        <rect x="0" y="112" width="46" height="8" rx="1" fill="currentColor"/>
+        <circle cx="18" cy="30" r="5" fill="#B98B2E"/>
+      </svg>
+    </span>
+    {% endif %}
+  </div>
+  <figcaption>
+    Cada lombada é um livro do banco. Um espaço tracejado <span class="amostra"></span> significa que
+    todos os exemplares daquele livro estão emprestados.
+  </figcaption>
+</figure>
+
+<div class="duas-colunas">
+  <article>
+    <h3>Devoluções atrasadas</h3>
+    {% if atrasados %}
+      <ul class="lista-atrasados">
+        {% for e in atrasados %}
+        <li>
+          <span>
+            <a href="{% url 'emprestimo_detalhe' e.id_emprestimo %}">{{ e.titulo }}</a>
+            <small>com {{ e.nome_membro }}</small>
+          </span>
+          <span class="carimbo carimbo-atraso">{{ e.dias_atraso }} dia{{ e.dias_atraso|pluralize }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nenhum empréstimo atrasado. Todo mundo dentro do prazo.</p>
+    {% endif %}
+  </article>
+
+  <article>
+    <h3>Atalhos</h3>
+    <div class="atalhos">
+      <a href="{% url 'emprestimo_novo' %}" role="button">Registrar empréstimo</a>
+      <a href="{% url 'emprestimos_lista' %}?situacao=Ativos" role="button" class="secondary outline">Receber uma devolução</a>
+      <a href="{% url 'livro_criar' %}" role="button" class="secondary outline">Cadastrar livro</a>
+    </div>
+  </article>
+</div>
+{% endblock %}
+
+{% block aviso_banco %}
+<p class="aviso-banco">{% include "biblioteca/svg/banco.html" %}
+  <span>Os números e a lista de atrasados desta tela vêm da VIEW <code>vw_emprestimos_detalhados</code></span></p>
+{% endblock %}
