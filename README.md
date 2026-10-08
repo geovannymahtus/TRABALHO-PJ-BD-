@@ -8,9 +8,9 @@ Trabalho individual de Banco de Dados: um sistema web de biblioteca em que as re
 
 | | |
 |---|---|
-| **Nome** | [COLOCAR MEU NOME] |
+| **Nome** | [Geovanny Mahtus Aguiar Silva] |
 | **Disciplina** | Banco de Dados |
-| **Professor** | [COLOCAR NOME DO PROFESSOR] |
+| **Professor** | [Anderson Soares] |
 
 ## Sumário
 
