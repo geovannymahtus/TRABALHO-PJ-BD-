@@ -8,9 +8,9 @@ Trabalho individual de Banco de Dados: um sistema web de biblioteca em que as re
 
 | | |
 |---|---|
-| **Nome** | [Geovanny Mahtus Aguiar Silva] |
+| **Nome** | Geovanny Mahtus Aguiar Silva |
 | **Disciplina** | Banco de Dados |
-| **Professor** | [Anderson Soares] |
+| **Professor** | Anderson Soares |
 
 ## Sumário
 
@@ -244,8 +244,3 @@ biblioteca-bd/
 ├── .env.example
 └── README.md
 ```
-
-## Vídeo
-
-- Roteiro: [`docs/roteiro_video.md`](docs/roteiro_video.md)
-- Link do vídeo: [COLOCAR LINK DO VÍDEO]
